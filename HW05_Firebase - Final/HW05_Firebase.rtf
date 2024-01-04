@@ -1,0 +1,526 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Liberation Sans;Sans Serif;\f1\fswiss\fcharset0 FreeMono;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww13440\viewh7800\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs16
+This file was generated with auto-rtf version 1.1.0\line
+\line
+
+\fs40
+\f0
+\b LocationItem.kt\b0\line
+\fs20
+\f1
+package com.example.hw05_firebase
+\line
+
+\line
+data class LocationItem(
+\line
+  val latitude: Double,
+\line
+  val longitude: Double,
+\line
+  val address: String,
+\line
+  val timestamp: Long
+\line
+)
+\line
+
+\line
+\line
+\fs40
+\f0
+\b MainActivity.kt\b0\line
+\fs20
+\f1
+package com.example.hw05_firebase
+\line
+
+\line
+import androidx.appcompat.app.AppCompatActivity
+\line
+import android.os.Bundle
+\line
+import com.example.hw05_firebase.databinding.ActivityMainBinding
+\line
+
+\line
+class MainActivity : AppCompatActivity() \{
+\line
+  private var binding: ActivityMainBinding? = null
+\line
+
+\line
+  override fun onCreate(savedInstanceState: Bundle?) \{
+\line
+    super.onCreate(savedInstanceState)
+\line
+    binding = ActivityMainBinding.inflate(layoutInflater)
+\line
+    setContentView(binding?.root)
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b MapsFragment.kt\b0\line
+\fs20
+\f1
+package com.example.hw05_firebase
+\line
+
+\line
+import android.os.Bundle
+\line
+import androidx.fragment.app.Fragment
+\line
+import android.view.LayoutInflater
+\line
+import android.view.View
+\line
+import android.view.ViewGroup
+\line
+import com.example.hw05_firebase.databinding.FragmentMapsBinding
+\line
+
+\line
+/**
+\line
+ * A simple [Fragment] subclass.
+\line
+ * Use the [MapsFragment.newInstance] factory method to
+\line
+ * create an instance of this fragment.
+\line
+ */
+\line
+class MapsFragment : Fragment() \{
+\line
+  private var binding: FragmentMapsBinding? = null
+\line
+
+\line
+  override fun onCreateView(
+\line
+    inflater: LayoutInflater, container: ViewGroup?,
+\line
+    savedInstanceState: Bundle?
+\line
+  ): View? \{
+\line
+    binding = FragmentMapsBinding.inflate(inflater, container, false)
+\line
+
+\line
+    return binding?.root
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b RecyclerViewFragment.kt\b0\line
+\fs20
+\f1
+package com.example.hw05_firebase
+\line
+
+\line
+import android.os.Bundle
+\line
+import androidx.fragment.app.Fragment
+\line
+import android.view.LayoutInflater
+\line
+import android.view.View
+\line
+import android.view.ViewGroup
+\line
+import androidx.recyclerview.widget.LinearLayoutManager
+\line
+import androidx.recyclerview.widget.RecyclerView
+\line
+import com.example.hw05_firebase.databinding.FragmentRecyclerViewBinding
+\line
+import com.example.hw05_firebase.databinding.LocationItemViewBinding
+\line
+import java.text.SimpleDateFormat
+\line
+import java.util.Date
+\line
+import java.util.Locale
+\line
+
+\line
+class RecyclerViewFragment : Fragment() \{
+\line
+  private var _binding: FragmentRecyclerViewBinding? = null
+\line
+  private val binding get() = _binding!!
+\line
+
+\line
+  override fun onCreateView(
+\line
+    inflater: LayoutInflater, container: ViewGroup?,
+\line
+    savedInstanceState: Bundle?
+\line
+  ): View \{
+\line
+    _binding = FragmentRecyclerViewBinding.inflate(inflater, container, false)
+\line
+
+\line
+    // Sample data, make sure to replace with actual data
+\line
+    val locationItems = listOf(
+\line
+      LocationItem(
+\line
+        37.4219983,
+\line
+        -122.084,
+\line
+        "1600 Amphitheatre Parkway, Mountain View, CA",
+\line
+        System.currentTimeMillis()
+\line
+      ),
+\line
+      LocationItem(34.052235, -118.243683, "Los Angeles, CA", System.currentTimeMillis())
+\line
+    )
+\line
+
+\line
+    // Set up the RecyclerView
+\line
+    binding.recyclerView.adapter = ItemAdapter(locationItems)
+\line
+    binding.recyclerView.layoutManager = LinearLayoutManager(context)
+\line
+
+\line
+    return binding.root
+\line
+  \}
+\line
+
+\line
+  override fun onDestroyView() \{
+\line
+    super.onDestroyView()
+\line
+    _binding = null
+\line
+  \}
+\line
+
+\line
+  class ItemAdapter(private val locationItems: List<LocationItem>) :
+\line
+    RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() \{
+\line
+
+\line
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder \{
+\line
+      val binding =
+\line
+        LocationItemViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+\line
+      return ItemViewHolder(binding)
+\line
+    \}
+\line
+
+\line
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) \{
+\line
+      val item = locationItems[position]
+\line
+      with(holder.binding) \{
+\line
+        coordinates.text = "Lat: $\{item.latitude\}, Long: $\{item.longitude\}"
+\line
+        address.text = item.address
+\line
+        timestamp.text =
+\line
+          SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(
+\line
+            Date(item.timestamp)
+\line
+          )
+\line
+      \}
+\line
+    \}
+\line
+
+\line
+    override fun getItemCount() = locationItems.size
+\line
+
+\line
+    class ItemViewHolder(val binding: LocationItemViewBinding) :
+\line
+      RecyclerView.ViewHolder(binding.root)
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b layout/activity_main.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent"
+\line
+  tools:context=".MainActivity">
+\line
+
+\line
+
+\line
+  <androidx.fragment.app.FragmentContainerView
+\line
+    android:id="@+id/fragmentContainerView"
+\line
+    android:name="androidx.navigation.fragment.NavHostFragment"
+\line
+    android:layout_width="0dp"
+\line
+    android:layout_height="0dp"
+\line
+    android:layout_marginStart="1dp"
+\line
+    android:layout_marginTop="1dp"
+\line
+    android:layout_marginEnd="1dp"
+\line
+    android:layout_marginBottom="1dp"
+\line
+    app:defaultNavHost="true"
+\line
+    app:layout_constraintBottom_toBottomOf="parent"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toTopOf="parent"
+\line
+    app:navGraph="@navigation/nav_graph" />
+\line
+</androidx.constraintlayout.widget.ConstraintLayout>\line
+\line
+\fs40
+\f0
+\b layout/fragment_maps.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent"
+\line
+  tools:context=".MapsFragment">
+\line
+
+\line
+  <!-- TODO: Update blank fragment layout -->
+\line
+  <TextView
+\line
+    android:layout_width="match_parent"
+\line
+    android:layout_height="match_parent"
+\line
+    android:text="@string/hello_blank_fragment" />
+\line
+
+\line
+</FrameLayout>\line
+\line
+\fs40
+\f0
+\b layout/fragment_recycler_view.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent"
+\line
+  tools:context=".RecyclerViewFragment">
+\line
+
+\line
+  <androidx.recyclerview.widget.RecyclerView
+\line
+    android:id="@+id/recycler_view"
+\line
+    android:layout_width="match_parent"
+\line
+    android:layout_height="match_parent" />
+\line
+
+\line
+</FrameLayout>\line
+\line
+\fs40
+\f0
+\b layout/location_item_view.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="wrap_content"
+\line
+  android:orientation="horizontal"
+\line
+  android:padding="16dp">
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/coordinates"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="Lat, Long"
+\line
+    android:textColor="#333"
+\line
+    android:textSize="18sp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/address"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="Address" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/timestamp"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="timestamp" />
+\line
+</LinearLayout>
+\line
+\line
+\fs40
+\f0
+\b navigation/nav_graph.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:id="@+id/nav_graph"
+\line
+  app:startDestination="@id/recyclerViewFragment">
+\line
+
+\line
+  <fragment
+\line
+    android:id="@+id/recyclerViewFragment"
+\line
+    android:name="com.example.hw05_firebase.RecyclerViewFragment"
+\line
+    android:label="fragment_recycler_view"
+\line
+    tools:layout="@layout/fragment_recycler_view" >
+\line
+    <action
+\line
+      android:id="@+id/action_recyclerViewFragment_to_mapsFragment"
+\line
+      app:destination="@id/mapsFragment" />
+\line
+  </fragment>
+\line
+  <fragment
+\line
+    android:id="@+id/mapsFragment"
+\line
+    android:name="com.example.hw05_firebase.MapsFragment"
+\line
+    android:label="fragment_maps"
+\line
+    tools:layout="@layout/fragment_maps" />
+\line
+</navigation>\line
+\line
+\fs40
+\f0
+\b values/strings.xml\b0\line
+\fs20
+\f1
+<resources>
+\line
+  <string name="app_name">HW05_Firebase</string>
+\line
+  <!-- TODO: Remove or change this placeholder text -->
+\line
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+\line
+</resources>\line
+\line
+}

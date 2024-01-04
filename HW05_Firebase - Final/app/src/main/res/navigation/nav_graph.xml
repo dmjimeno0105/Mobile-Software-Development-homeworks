@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/recyclerViewFragment">
+
+    <fragment
+        android:id="@+id/recyclerViewFragment"
+        android:name="com.example.hw05_firebase.RecyclerViewFragment"
+        android:label="fragment_recycler_view"
+        tools:layout="@layout/fragment_recycler_view" >
+        <action
+            android:id="@+id/action_recyclerViewFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.hw05_firebase.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" />
+</navigation>

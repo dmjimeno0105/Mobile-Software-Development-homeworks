@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/listScreen">
+
+    <fragment
+        android:id="@+id/listScreen"
+        android:name="edu.vt.cs3714.retrofitrecyclerviewguide.ListScreen"
+        android:label="fragment_list_screen"
+        tools:layout="@layout/fragment_list_screen" >
+        <action
+            android:id="@+id/action_listScreen_to_detailScreen"
+            app:destination="@id/detailScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailScreen"
+        android:name="edu.vt.cs3714.retrofitrecyclerviewguide.DetailScreen"
+        android:label="fragment_detail_screen"
+        tools:layout="@layout/fragment_detail_screen" />
+</navigation>

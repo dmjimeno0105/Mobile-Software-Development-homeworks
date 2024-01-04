@@ -1,0 +1,21 @@
+{
+  "United States": "USD",
+  "Japan": "JPY",
+  "United Kingdom": "GBP",
+  "China": "CNY",
+  "Australia": "AUD",
+  "Canada": "CAD",
+  "Switzerland": "CHF",
+  "Hong Kong": "HKD",
+  "Singapore": "SGD",
+  "Sweden": "SEK",
+  "South Korea": "KRW",
+  "Norway": "NOK",
+  "New Zealand": "NZD",
+  "India": "INR",
+  "Mexico": "MXN",
+  "Taiwan": "TWD",
+  "South Africa": "ZAR",
+  "Brazil": "BRL",
+  "Denmark": "DKK"
+}

@@ -1,0 +1,377 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Liberation Sans;Sans Serif;\f1\fswiss\fcharset0 FreeMono;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww13440\viewh7800\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs16
+This file was generated with auto-rtf version 1.1.0\line
+\line
+
+\fs40
+\f0
+\b MainActivity.kt\b0\line
+\fs20
+\f1
+package com.example.hw01_burger_app
+\line
+
+\line
+import androidx.appcompat.app.AppCompatActivity
+\line
+import android.os.Bundle
+\line
+import com.example.hw01_burger_app.databinding.ActivityMainBinding
+\line
+
+\line
+class MainActivity : AppCompatActivity() \{
+\line
+  private var binding: ActivityMainBinding? = null
+\line
+
+\line
+  override fun onCreate(savedInstanceState: Bundle?) \{
+\line
+    super.onCreate(savedInstanceState)
+\line
+    binding = ActivityMainBinding.inflate(layoutInflater)
+\line
+    setContentView(binding?.root)
+\line
+
+\line
+
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b layout/activity_main.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent">
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/welcome_tv"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:layout_marginTop="30dp"
+\line
+    android:text="@string/burger_shop"
+\line
+    android:textSize="16sp"
+\line
+    android:textStyle="bold"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toTopOf="parent" />
+\line
+
+\line
+  <ImageView
+\line
+    android:id="@+id/burger_iv"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:src="@drawable/burger"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    tools:layout_editor_absoluteY="75dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/bun_prompt_tv"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/select_a_bun"
+\line
+    app:layout_constraintEnd_toStartOf="@+id/buns_spnr"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    tools:layout_editor_absoluteY="325dp" />
+\line
+
+\line
+  <Spinner
+\line
+    android:id="@+id/buns_spnr"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toEndOf="@id/bun_prompt_tv"
+\line
+    tools:layout_editor_absoluteY="322dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/patty_prompt_tv"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/select_a_patty"
+\line
+    app:layout_constraintEnd_toStartOf="@+id/buns_spnr"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    tools:layout_editor_absoluteY="375dp" />
+\line
+
+\line
+  <Spinner
+\line
+    android:id="@+id/patty_spnr"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toEndOf="@id/bun_prompt_tv"
+\line
+    tools:layout_editor_absoluteY="372dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/topping_prompt_tv"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/select_a_topping"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    tools:layout_editor_absoluteY="425dp" />
+\line
+
+\line
+  <CheckBox
+\line
+    android:id="@+id/checkbox_chbx"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/bacon"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    tools:layout_editor_absoluteY="450dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/amount_prompt_tv"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/enter_amount"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintEnd_toStartOf="@id/amount_input"
+\line
+    tools:layout_editor_absoluteY="548dp" />
+\line
+
+\line
+  <com.google.android.material.textfield.TextInputEditText
+\line
+    android:id="@+id/amount_input"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:hint="@string/_4"
+\line
+    android:inputType="numberDecimal"
+\line
+    android:textSize="14sp"
+\line
+    app:layout_constraintStart_toEndOf="@id/amount_prompt_tv"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    tools:layout_editor_absoluteY="536dp" />
+\line
+
+\line
+  <Button
+\line
+    android:id="@+id/purchase_button"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/purchase"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    tools:layout_editor_absoluteY="587dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/cost_description"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/cost"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintEnd_toStartOf="@id/actual_cost"
+\line
+    tools:layout_editor_absoluteY="654dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/actual_cost"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/_20_00"
+\line
+    tools:layout_editor_absoluteX="173dp"
+\line
+    tools:layout_editor_absoluteY="654dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/calories_description"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/calories"
+\line
+    tools:layout_editor_absoluteX="261dp"
+\line
+    tools:layout_editor_absoluteY="659dp" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/actual_calories"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="@string/_2000"
+\line
+    tools:layout_editor_absoluteX="335dp"
+\line
+    tools:layout_editor_absoluteY="659dp" />
+\line
+
+\line
+</androidx.constraintlayout.widget.ConstraintLayout>\line
+\line
+\fs40
+\f0
+\b values/strings.xml\b0\line
+\fs20
+\f1
+<resources>
+\line
+  <string name="app_name">HW01_Burger_App</string>
+\line
+  <string name="burger_shop">Burger Shop</string>
+\line
+  <string name="select_a_bun">Select a bun:</string>
+\line
+  <string name="select_a_patty">Select a patty:</string>
+\line
+  <string name="select_a_topping">Select a topping:</string>
+\line
+  <string name="enter_amount">Enter amount:</string>
+\line
+  <string name="_4">4</string>
+\line
+  <string name="purchase">Purchase</string>
+\line
+  <string name="cost">Cost:</string>
+\line
+  <string name="_20_00">$20.00</string>
+\line
+  <string name="calories">Calories:</string>
+\line
+  <string name="_2000">2000</string>
+\line
+  <string name="bacon">Bacon</string>
+\line
+</resources>\line
+\line
+}

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Hokie Composer</string>
+    <string-array name="background_music">
+        <item>Go Tech Go!</item>
+        <item>Enter Sandman</item>
+        <item>Tech Triumph</item>
+    </string-array>
+    <string-array name="overlapping_soundtracks">
+        <item>Clapping</item>
+        <item>Cheering</item>
+        <item>Go Hokies!</item>
+    </string-array>
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
+    <string name="resume">Resume</string>
+    <string name="restart">Restart</string>
+    <string name="go_tech_go">Go Tech Go!</string>
+    <string name="soundtrack_image_description">Soundtrack image</string>
+</resources>

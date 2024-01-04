@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1085512499916",
+    "project_id": "hw05-firebase",
+    "storage_bucket": "hw05-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085512499916:android:62378dd2053549dddf7869",
+        "android_client_info": {
+          "package_name": "com.example.hw05_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgx-cSw6qwYYOL4Xbq6i3TIRYei4slXG8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

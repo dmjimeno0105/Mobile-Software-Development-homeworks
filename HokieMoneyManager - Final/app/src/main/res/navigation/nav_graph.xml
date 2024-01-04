@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/landingPage">
+
+    <fragment
+        android:id="@+id/landingPage"
+        android:name="com.example.hokiemoneymanager.LandingPage"
+        android:label="fragment_landing_page"
+        tools:layout="@layout/fragment_landing_page" >
+        <action
+            android:id="@+id/action_landingPage_to_expenses"
+            app:destination="@id/expenses" />
+        <action
+            android:id="@+id/action_landingPage_to_income"
+            app:destination="@id/income" />
+        <action
+            android:id="@+id/action_landingPage_to_settings"
+            app:destination="@id/settings" />
+    </fragment>
+    <fragment
+        android:id="@+id/income"
+        android:name="com.example.hokiemoneymanager.Income"
+        android:label="fragment_income"
+        tools:layout="@layout/fragment_income" >
+        <action
+            android:id="@+id/action_income_to_incomeInput"
+            app:destination="@id/incomeInput" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenses"
+        android:name="com.example.hokiemoneymanager.Expenses"
+        android:label="fragment_expenses"
+        tools:layout="@layout/fragment_expenses" >
+        <action
+            android:id="@+id/action_expenses_to_expenseInput2"
+            app:destination="@id/expenseInput2" />
+    </fragment>
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.example.hokiemoneymanager.Settings"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settings_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.hokiemoneymanager.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/incomeInput"
+        android:name="com.example.hokiemoneymanager.IncomeInput"
+        android:label="fragment_income_input"
+        tools:layout="@layout/fragment_income_input" >
+        <action
+            android:id="@+id/action_incomeInput_to_income"
+            app:destination="@id/income" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseInput2"
+        android:name="com.example.hokiemoneymanager.ExpensesInput"
+        android:label="fragment_expense_input"
+        tools:layout="@layout/fragment_expense_input" >
+        <action
+            android:id="@+id/action_expenseInput2_to_expenses"
+            app:destination="@id/expenses" />
+    </fragment>
+</navigation>

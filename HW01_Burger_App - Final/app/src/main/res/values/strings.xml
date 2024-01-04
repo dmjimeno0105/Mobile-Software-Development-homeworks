@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HW01_Burger_App</string>
+    <string name="burger_shop">Burger Shop</string>
+    <string name="select_a_bun">Select a bun:</string>
+    <string name="select_a_patty">Select a patty:</string>
+    <string name="select_a_topping">Select a topping:</string>
+    <string name="enter_amount">Enter amount:</string>
+    <string name="_4">4</string>
+    <string name="purchase">Purchase</string>
+    <string name="cost">Cost:</string>
+    <string name="_20_00">$20.00</string>
+    <string name="calories">Calories:</string>
+    <string name="_2000">2000</string>
+    <string name="bacon">Bacon</string>
+</resources>

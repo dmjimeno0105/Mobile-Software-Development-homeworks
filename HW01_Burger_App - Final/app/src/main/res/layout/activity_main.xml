@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/welcome_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/burger_shop"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="600dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/burger_iv"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/burger"
+        android:layout_marginBottom="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/bun_prompt_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_a_bun"
+        app:layout_constraintEnd_toStartOf="@+id/buns_spnr"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Spinner
+        android:id="@+id/buns_spnr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/bun_prompt_tv"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/patty_prompt_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_a_patty"
+        app:layout_constraintEnd_toStartOf="@+id/buns_spnr"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="150dp"
+        app:layout_constraintTop_toBottomOf="@id/bun_prompt_tv"
+        app:layout_constraintBottom_toTopOf="@id/topping_prompt_tv"/>
+
+    <Spinner
+        android:id="@+id/patty_spnr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/bun_prompt_tv"
+        android:layout_marginBottom="150dp"
+        app:layout_constraintTop_toBottomOf="@id/bun_prompt_tv"
+        app:layout_constraintBottom_toTopOf="@id/topping_prompt_tv" />
+
+    <TextView
+        android:id="@+id/topping_prompt_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        android:layout_marginBottom="200dp"
+        android:text="@string/select_a_topping"
+        app:layout_constraintBottom_toTopOf="@id/checkbox_chbx"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/patty_spnr" />
+
+    <CheckBox
+        android:id="@+id/checkbox_chbx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bacon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintTop_toBottomOf="@id/topping_prompt_tv"
+        app:layout_constraintBottom_toTopOf="@id/amount_prompt_tv" />
+
+    <TextView
+        android:id="@+id/amount_prompt_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_amount"
+        app:layout_constraintEnd_toStartOf="@id/amount_input"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintTop_toBottomOf="@id/checkbox_chbx"
+        app:layout_constraintBottom_toTopOf="@id/purchase_button" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/amount_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/_4"
+        android:inputType="numberDecimal"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/amount_prompt_tv"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintTop_toBottomOf="@id/checkbox_chbx"
+        app:layout_constraintBottom_toTopOf="@id/purchase_button" />
+
+    <Button
+        android:id="@+id/purchase_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/purchase"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintTop_toBottomOf="@id/amount_prompt_tv"
+        app:layout_constraintBottom_toTopOf="@id/cost_description" />
+
+    <TextView
+        android:id="@+id/cost_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cost"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintEnd_toStartOf="@id/actual_cost"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/purchase_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/actual_cost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_20_00"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintEnd_toStartOf="@id/calories_description"
+        app:layout_constraintStart_toEndOf="@id/cost_description"
+        app:layout_constraintTop_toBottomOf="@id/purchase_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/calories_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/calories"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintEnd_toStartOf="@id/actual_calories"
+        app:layout_constraintStart_toEndOf="@id/actual_cost"
+        app:layout_constraintTop_toBottomOf="@id/purchase_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/actual_calories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_2000"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/calories_description"
+        app:layout_constraintTop_toBottomOf="@id/purchase_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "828180775403",
+    "project_id": "hokie-money-manager",
+    "storage_bucket": "hokie-money-manager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:828180775403:android:6edb9a853d3a36baf519ae",
+        "android_client_info": {
+          "package_name": "com.example.hokiemoneymanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkRIOwGoHMkqP4nCHxh_5mS0E99wFfqEM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

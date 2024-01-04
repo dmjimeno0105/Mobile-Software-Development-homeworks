@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Hokie Money Manager</string>
+    <string-array name="currency_array">
+        <item>United States</item>
+        <item>Japan</item>
+        <item>United Kingdom</item>
+        <item>China</item>
+        <item>Australia</item>
+        <item>Canada</item>
+        <item>Switzerland</item>
+        <item>Hong Kong</item>
+        <item>Singapore</item>
+        <item>Sweden</item>
+        <item>South Korea</item>
+        <item>Norway</item>
+        <item>New Zealand</item>
+        <item>India</item>
+        <item>Mexico</item>
+        <item>Taiwan</item>
+        <item>South Africa</item>
+        <item>Brazil</item>
+        <item>Denmark</item>
+    </string-array>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="select_currency">Select a currency</string>
+    <string name="home">Home</string>
+    <string name="first_column_text">Item</string>
+    <string name="second_column_text">$[Price]</string>
+    <string name="month_text">Month</string>
+    <string name="income_account_text">Income Account</string>
+    <string name="expense_account_text">Expense Account</string>
+    <string name="category_amount_hint">$32.50</string>
+    <string name="amount">Amount:</string>
+    <string name="category">Category:</string>
+    <string name="submit">Submit</string>
+    <string name="category_hint">Groceries, Personal, Transportation</string>
+    <string name="_70">$70</string>
+
+</resources>

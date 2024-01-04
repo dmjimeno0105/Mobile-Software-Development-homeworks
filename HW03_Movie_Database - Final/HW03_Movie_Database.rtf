@@ -1,0 +1,1852 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Liberation Sans;Sans Serif;\f1\fswiss\fcharset0 FreeMono;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww13440\viewh7800\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs16
+This file was generated with auto-rtf version 1.1.0\line
+\line
+
+\fs40
+\f0
+\b DateConverter.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import androidx.room.TypeConverter
+\line
+import java.util.Date
+\line
+
+\line
+class DateConverter \{
+\line
+  @TypeConverter
+\line
+  fun fromTimestamp(value: Long?): Date? \{
+\line
+    return if (value == null) null else Date(value)
+\line
+  \}
+\line
+
+\line
+  @TypeConverter
+\line
+  fun dateToTimestamp(date: Date): Long \{
+\line
+    return date.time
+\line
+  \}
+\line
+\}
+\line
+\line
+\fs40
+\f0
+\b DetailScreen.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import android.os.Bundle
+\line
+import android.util.Log
+\line
+import androidx.fragment.app.Fragment
+\line
+import android.view.LayoutInflater
+\line
+import android.view.View
+\line
+import android.view.ViewGroup
+\line
+import androidx.fragment.app.activityViewModels
+\line
+import androidx.lifecycle.lifecycleScope
+\line
+import com.bumptech.glide.Glide
+\line
+import edu.vt.cs3714.retrofitrecyclerviewguide.databinding.FragmentDetailScreenBinding
+\line
+import kotlinx.coroutines.Dispatchers
+\line
+import kotlinx.coroutines.GlobalScope
+\line
+import kotlinx.coroutines.launch
+\line
+
+\line
+/**
+\line
+ * DetailScreen fragment class
+\line
+ */
+\line
+class DetailScreen : Fragment() \{
+\line
+  private var binding: FragmentDetailScreenBinding? = null
+\line
+  private val model: MovieViewModel by activityViewModels()
+\line
+  var movie: MovieItem? = null
+\line
+  private lateinit var movieDao: MovieItemDao
+\line
+
+\line
+  override fun onCreate(savedInstanceState: Bundle?) \{
+\line
+    super.onCreate(savedInstanceState)
+\line
+    binding = FragmentDetailScreenBinding.inflate(layoutInflater)
+\line
+    movie = arguments?.getParcelable("movie_key")
+\line
+    movieDao = MovieRoomDatabase.getDatabase(requireContext().applicationContext).movieDao()
+\line
+    if (movie!!.liked) \{
+\line
+      binding?.likeButton?.text = "Liked"
+\line
+    \} else \{
+\line
+      binding?.likeButton?.text = "Unliked"
+\line
+    \}
+\line
+
+\line
+    binding?.likeButton?.setOnClickListener \{
+\line
+      movie?.let \{
+\line
+        it.liked = !it.liked
+\line
+      \}
+\line
+
+\line
+      // Update the database
+\line
+      lifecycleScope.launch(Dispatchers.IO) \{
+\line
+        movieDao.updateLikeStatus(movie!!.id, movie!!.liked)
+\line
+      \}
+\line
+
+\line
+      // Update UI should be on the Main thread
+\line
+      lifecycleScope.launch(Dispatchers.Main) \{
+\line
+        if (movie!!.liked) \{
+\line
+          binding?.likeButton?.text = "Liked"
+\line
+        \} else \{
+\line
+          binding?.likeButton?.text = "Unliked"
+\line
+        \}
+\line
+      \}
+\line
+    \}
+\line
+  \}
+\line
+
+\line
+  override fun onCreateView(
+\line
+    inflater: LayoutInflater, container: ViewGroup?,
+\line
+    savedInstanceState: Bundle?
+\line
+  ): View? \{
+\line
+
+\line
+    model.allMovies.observe(viewLifecycleOwner) \{ movies ->
+\line
+      // Update the RecyclerView adapter here
+\line
+      movies?.let \{
+\line
+        Log.d("title type", "$\{this.arguments?.getString("title")!!::class.simpleName\}")
+\line
+        Log.d("release date", "$\{this.arguments?.getString("release")\}")
+\line
+        val posterPath = this.arguments?.getString("poster_path")
+\line
+        if (!posterPath.isNullOrEmpty()) \{
+\line
+          Glide.with(this).load(resources.getString(R.string.picture_base_url) + posterPath).into(binding?.detailScreenPoster!!)
+\line
+        \}
+\line
+        binding?.detailScreenTitle?.text = this.arguments?.getString("title")
+\line
+        binding?.detailScreenRelease?.text = "Release date: $\{this.arguments?.getString("release_date")\}"
+\line
+        binding?.detailScreenOverview?.text = "Overview: $\{this.arguments?.getString("overview")\}"
+\line
+      \}
+\line
+    \}
+\line
+    return binding?.root
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b ListScreen.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import android.os.Bundle
+\line
+import android.util.Log
+\line
+import androidx.fragment.app.Fragment
+\line
+import android.view.LayoutInflater
+\line
+import android.view.View
+\line
+import android.view.ViewGroup
+\line
+import android.widget.AdapterView
+\line
+import android.widget.ArrayAdapter
+\line
+import android.widget.ImageView
+\line
+import android.widget.SearchView
+\line
+import android.widget.Spinner
+\line
+import android.widget.TextView
+\line
+import android.widget.Toast
+\line
+import androidx.core.os.bundleOf
+\line
+import androidx.fragment.app.activityViewModels
+\line
+import androidx.lifecycle.ViewModelProvider
+\line
+import androidx.navigation.findNavController
+\line
+import androidx.recyclerview.widget.LinearLayoutManager
+\line
+import androidx.recyclerview.widget.RecyclerView
+\line
+import com.bumptech.glide.Glide
+\line
+import com.bumptech.glide.request.RequestOptions
+\line
+import edu.vt.cs3714.retrofitrecyclerviewguide.databinding.FragmentListScreenBinding
+\line
+import kotlinx.coroutines.*
+\line
+import org.w3c.dom.Text
+\line
+import java.text.SimpleDateFormat
+\line
+import java.util.Locale
+\line
+
+\line
+/**
+\line
+ * ListScreen fragment class
+\line
+ */
+\line
+class ListScreen : Fragment(), AdapterView.OnItemSelectedListener \{
+\line
+  private val movies = ArrayList<MovieItem>()
+\line
+//  private lateinit var job: Job
+\line
+  private val apiKey by lazy \{
+\line
+    resources.getString(R.string.api_key)
+\line
+  \}
+\line
+  private val retrofitService by lazy \{
+\line
+    RetrofitService.create(resources.getString(R.string.base_url))
+\line
+  \}
+\line
+  private var binding: FragmentListScreenBinding? = null
+\line
+  private val model: MovieViewModel by activityViewModels()
+\line
+  var spinner: Spinner? = null
+\line
+  val adapter = MovieListAdapter()
+\line
+
+\line
+  fun movies() : ArrayList<MovieItem> \{
+\line
+    return movies
+\line
+  \}
+\line
+
+\line
+  override fun onCreate(savedInstanceState: Bundle?) \{
+\line
+    super.onCreate(savedInstanceState)
+\line
+  \}
+\line
+
+\line
+  override fun onCreateView(
+\line
+    inflater: LayoutInflater, container: ViewGroup?,
+\line
+    savedInstanceState: Bundle?
+\line
+  ): View? \{
+\line
+    binding = FragmentListScreenBinding.inflate(inflater, container, false)
+\line
+    spinner = binding!!.sortOptions
+\line
+    spinner!!.onItemSelectedListener = this@ListScreen
+\line
+    val recyclerView = binding?.movieList
+\line
+    recyclerView?.adapter = adapter
+\line
+    recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+\line
+
+\line
+    model.allMovies.observe(viewLifecycleOwner) \{ movies ->
+\line
+      // Update the RecyclerView adapter here
+\line
+      movies?.let \{
+\line
+        adapter.setMovies(it)
+\line
+      \}
+\line
+    \}
+\line
+
+\line
+    /*binding?.searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener \{
+\line
+      override fun onQueryTextSubmit(query: String?): Boolean \{
+\line
+        query?.let \{ searchTerm ->
+\line
+          val filteredMovies = movies.filter \{ it.title.contains(searchTerm, ignoreCase = true) \}
+\line
+          adapter.setMovies(filteredMovies)
+\line
+        \}
+\line
+
+\line
+        return true
+\line
+      \}
+\line
+
+\line
+      override fun onQueryTextChange(newText: String?): Boolean \{
+\line
+        val moviesString = movies.joinToString(separator = "\n") \{ it.title \}
+\line
+        newText?.let \{ query ->
+\line
+          val filteredMovies = movies.filter \{ it.title.contains(query, ignoreCase = true) \}
+\line
+          adapter.setMovies(filteredMovies)
+\line
+          val filteredMoviesString = filteredMovies.joinToString(separator = "\n") \{ it.title \}
+\line
+          Log.d("filtered movies", "list: $filteredMoviesString")
+\line
+        \}
+\line
+        return true
+\line
+      \}
+\line
+
+\line
+    \})*/
+\line
+
+\line
+    binding?.refresh?.setOnClickListener\{
+\line
+      // Display a short toast message
+\line
+      Toast.makeText(context, "Refresh clicked", Toast.LENGTH_SHORT).show()
+\line
+      model.refreshMovies(1)
+\line
+    \}
+\line
+
+\line
+    ArrayAdapter.createFromResource(
+\line
+      requireContext(),
+\line
+      R.array.sorting_options,  // Your spinner item layout
+\line
+      android.R.layout.simple_spinner_item
+\line
+    ).also \{ adapter ->
+\line
+      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+\line
+      spinner!!.adapter = adapter
+\line
+    \}
+\line
+
+\line
+    Log.d("ListScreen", "Movies: $movies")
+\line
+    return binding?.root
+\line
+  \}
+\line
+
+\line
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) \{
+\line
+    super.onViewCreated(view, savedInstanceState)
+\line
+
+\line
+    // Assuming you added a Switch in your layout with the id "switchFilterLiked"
+\line
+    binding?.filter?.setOnCheckedChangeListener \{ _, isChecked ->
+\line
+      if (isChecked) \{
+\line
+        // Remove observer from allMovies to avoid multiple observers
+\line
+        model.allMovies.removeObservers(viewLifecycleOwner)
+\line
+
+\line
+        model.likedMovies.observe(viewLifecycleOwner, \{ movies ->
+\line
+          // Assuming you have a method in your adapter called 'submitList' or 'updateList' to update the dataset.
+\line
+          adapter.setMovies(movies)
+\line
+        \})
+\line
+      \} else \{
+\line
+        // Remove observer from likedMovies to avoid multiple observers
+\line
+        model.likedMovies.removeObservers(viewLifecycleOwner)
+\line
+
+\line
+        model.allMovies.observe(viewLifecycleOwner, \{ movies ->
+\line
+          // Assuming you have a method in your adapter called 'submitList' or 'updateList' to update the dataset.
+\line
+          adapter.setMovies(movies)
+\line
+        \})
+\line
+      \}
+\line
+    \}
+\line
+  \}
+\line
+
+\line
+  override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) \{
+\line
+    val selectedItem = parent?.getItemAtPosition(position).toString()
+\line
+    Toast.makeText(context, "Selected: $selectedItem", Toast.LENGTH_SHORT).show()
+\line
+
+\line
+    // If you want to perform any action based on the selected item:
+\line
+    when (selectedItem) \{
+\line
+      "Title" -> \{
+\line
+        // Sort movies by title or any other action you want
+\line
+        movies.sortBy \{ it.title \}
+\line
+        binding?.movieList?.adapter?.notifyDataSetChanged()
+\line
+      \}
+\line
+      "Rating" -> \{
+\line
+        // Sort movies by rating or any other action you want
+\line
+        movies.sortBy \{ it.vote_average \}
+\line
+        binding?.movieList?.adapter?.notifyDataSetChanged()
+\line
+      \}
+\line
+      // Add more conditions if needed
+\line
+    \}
+\line
+  \}
+\line
+
+\line
+  override fun onNothingSelected(parent: AdapterView<*>?) \{
+\line
+    TODO("Not yet implemented")
+\line
+  \}
+\line
+
+\line
+
+\line
+  /**
+\line
+   * A RecyclerView adapter class. Provides the list of items to be displayed there.
+\line
+   */
+\line
+  inner class MovieListAdapter : RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>() \{
+\line
+    inner class MovieViewHolder(val view: View) : RecyclerView.ViewHolder(view) \{
+\line
+      fun bindItems(movieItem: MovieItem) \{
+\line
+        itemView.setOnClickListener \{
+\line
+          Log.d("retrofit_demo", "list tap ")
+\line
+          // Convert the date to string
+\line
+          val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.US)
+\line
+          val dateString = dateFormat.format(movieItem.release_date)
+\line
+          val bundle = bundleOf(
+\line
+            "poster_path" to movieItem.poster_path,
+\line
+            "title" to movieItem.title,
+\line
+            "release_date" to dateString,
+\line
+            "overview" to movieItem.overview
+\line
+          )
+\line
+          bundle.putParcelable("movie_key", movieItem)
+\line
+          Log.d("release date type", "$\{(movieItem.release_date)::class.simpleName ?: "Unknown"\}")
+\line
+          binding?.root?.findNavController()?.navigate(R.id.action_listScreen_to_detailScreen, bundle)
+\line
+        \}
+\line
+      \}
+\line
+    \}
+\line
+
+\line
+    internal fun setMovies(movies: List<MovieItem>) \{
+\line
+      this@ListScreen.movies.clear()
+\line
+      this@ListScreen.movies.addAll(movies)
+\line
+      notifyDataSetChanged()
+\line
+    \}
+\line
+
+\line
+    override fun getItemCount(): Int \{
+\line
+      return movies.size
+\line
+    \}
+\line
+
+\line
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder \{
+\line
+      val v = LayoutInflater.from(parent.context).inflate(R.layout.card_view, parent, false)
+\line
+      return MovieViewHolder(v)
+\line
+    \}
+\line
+
+\line
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) \{
+\line
+      Glide.with(this@ListScreen)
+\line
+        .load(resources.getString(R.string.picture_base_url) + movies[position].poster_path)
+\line
+        .apply(RequestOptions().override(128, 128))
+\line
+        .into(holder.view.findViewById(R.id.poster))
+\line
+
+\line
+      holder.view.findViewById<TextView>(R.id.title).text = movies[position].title
+\line
+
+\line
+      holder.view.findViewById<TextView>(R.id.rating).text = movies[position].vote_average.toString()
+\line
+
+\line
+      holder.bindItems(movies[position])
+\line
+    \}
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b MainActivity.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import android.content.Context
+\line
+import androidx.appcompat.app.AppCompatActivity
+\line
+import android.os.Bundle
+\line
+import android.util.Log
+\line
+import android.view.LayoutInflater
+\line
+import android.view.View
+\line
+import android.view.ViewGroup
+\line
+import android.view.inputmethod.InputMethodManager
+\line
+import android.widget.Button
+\line
+import android.widget.SearchView
+\line
+import android.widget.TextView
+\line
+import android.widget.Toast
+\line
+import androidx.core.os.bundleOf
+\line
+import androidx.lifecycle.Observer
+\line
+import androidx.lifecycle.ViewModelProvider
+\line
+import androidx.navigation.findNavController
+\line
+import androidx.recyclerview.widget.LinearLayoutManager
+\line
+import androidx.recyclerview.widget.RecyclerView
+\line
+import com.bumptech.glide.Glide
+\line
+import com.bumptech.glide.request.RequestOptions
+\line
+import edu.vt.cs3714.retrofitrecyclerviewguide.R
+\line
+import edu.vt.cs3714.retrofitrecyclerviewguide.databinding.ActivityMainBinding
+\line
+import edu.vt.cs3714.retrofitrecyclerviewguide.databinding.FragmentListScreenBinding
+\line
+import kotlinx.coroutines.*
+\line
+import retrofit2.HttpException
+\line
+
+\line
+class MainActivity : AppCompatActivity()\{
+\line
+  private var binding: ActivityMainBinding? = null
+\line
+
+\line
+  override fun onCreate(savedInstanceState: Bundle?) \{
+\line
+    super.onCreate(savedInstanceState)
+\line
+    binding = ActivityMainBinding.inflate(layoutInflater)
+\line
+    setContentView(binding?.root)
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b MovieItem.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import android.os.Parcelable
+\line
+import androidx.room.ColumnInfo
+\line
+import androidx.room.Entity
+\line
+import androidx.room.PrimaryKey
+\line
+import kotlinx.android.parcel.Parcelize
+\line
+import java.util.*
+\line
+
+\line
+@Parcelize
+\line
+@Entity(tableName = "movie_table")
+\line
+data class MovieItem(
+\line
+  @PrimaryKey @ColumnInfo(name = "id") var id: Long,
+\line
+  @ColumnInfo(name = "vote_count") var vote_count: Long,
+\line
+  @ColumnInfo(name = "vote_average") var vote_average: Float,
+\line
+  @ColumnInfo(name = "title") var title: String,
+\line
+  @ColumnInfo(name = "popularity") var popularity: Float,
+\line
+  @ColumnInfo(name = "poster_path") var poster_path: String,
+\line
+  @ColumnInfo(name = "overview") var overview: String,
+\line
+  @ColumnInfo(name = "release_date") var release_date: Date,
+\line
+  @ColumnInfo(name = "liked") var liked: Boolean = false
+\line
+) : Parcelable
+\line
+
+\line
+//Example JSON record from MovieDB
+\line
+/*
+\line
+*
+\line
+\{
+\line
+  "adult": false,
+\line
+  "backdrop_path": "/iGCHoFp4VUwMoolO2C2u12AgiKl.jpg",
+\line
+  "belongs_to_collection": null,
+\line
+  "budget": 0,
+\line
+  "genres": [
+\line
+  \{
+\line
+    "id": 18,
+\line
+    "name": "Drama"
+\line
+  \}
+\line
+  ],
+\line
+  "homepage": null,
+\line
+  "id": 515916,
+\line
+  "imdb_id": "tt8254556",
+\line
+  "original_language": "nl",
+\line
+  "original_title": "Girl",
+\line
+  "overview": "A 15-year-old girl, born in a boy's body, dreams of becoming a ballerina and will push her body to its limits in order for her dream to succeed.",
+\line
+  "popularity": 31.534,
+\line
+  "poster_path": "/a6WKjZ1eHrKV8u1DYqjW4yUPuC.jpg",
+\line
+  "release_date": "2018-09-27",
+\line
+  "revenue": 0,
+\line
+  "runtime": 105,
+\line
+  "spoken_languages": [
+\line
+  \{
+\line
+    "iso_639_1": "nl",
+\line
+    "name": "Nederlands"
+\line
+  \},
+\line
+  \{
+\line
+    "iso_639_1": "en",
+\line
+    "name": "English"
+\line
+  \},
+\line
+  \{
+\line
+    "iso_639_1": "fr",
+\line
+    "name": "Français"
+\line
+  \}
+\line
+  ],
+\line
+  "status": "Released",
+\line
+  "tagline": "",
+\line
+  "title": "Girl",
+\line
+  "video": false,
+\line
+  "vote_average": 7.7,
+\line
+  "vote_count": 140
+\line
+\}
+\line
+* */
+\line
+\line
+\fs40
+\f0
+\b MovieItemDao.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import androidx.lifecycle.LiveData
+\line
+import androidx.room.Dao
+\line
+import androidx.room.Insert
+\line
+import androidx.room.OnConflictStrategy
+\line
+import androidx.room.Query
+\line
+
+\line
+@Dao
+\line
+interface MovieItemDao \{
+\line
+
+\line
+  @Query("SELECT * FROM movie_table order BY release_date DESC")
+\line
+  fun getAllMovies(): LiveData<List<MovieItem>>
+\line
+
+\line
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+\line
+  fun insertMovie(movie: MovieItem)
+\line
+
+\line
+  @Query("DELETE FROM movie_table")
+\line
+  fun deleteAll()
+\line
+
+\line
+  @Query("UPDATE movie_table SET liked = :status WHERE id = :movieId")
+\line
+  suspend fun updateLikeStatus(movieId: Long, status: Boolean)
+\line
+
+\line
+  @Query("SELECT * FROM movie_table WHERE liked = 1")
+\line
+  fun getLikedMovies(): LiveData<List<MovieItem>>
+\line
+\}\line
+\line
+\fs40
+\f0
+\b MovieItemRepository.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import androidx.annotation.WorkerThread
+\line
+import androidx.lifecycle.LiveData
+\line
+
+\line
+class MovieItemRepository(private val movieDao: MovieItemDao) \{
+\line
+
+\line
+  val allMovies: LiveData<List<MovieItem>> = movieDao.getAllMovies()
+\line
+
+\line
+  fun getLikedMovies(): LiveData<List<MovieItem>> \{
+\line
+    return movieDao.getLikedMovies()
+\line
+  \}
+\line
+
+\line
+  @WorkerThread
+\line
+  fun insert(movie: MovieItem) \{
+\line
+
+\line
+
+\line
+    movieDao.insertMovie(movie)
+\line
+  \}
+\line
+
+\line
+  @WorkerThread
+\line
+  fun deleteAll() \{
+\line
+    movieDao.deleteAll()
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b MovieRoomDatabase.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import android.content.Context
+\line
+import androidx.room.Database
+\line
+import androidx.room.Room
+\line
+import androidx.room.RoomDatabase
+\line
+import androidx.room.TypeConverters
+\line
+import androidx.room.migration.Migration
+\line
+import androidx.sqlite.db.SupportSQLiteDatabase
+\line
+
+\line
+@Database(entities = [MovieItem::class], version = 2, exportSchema = false)
+\line
+@TypeConverters(DateConverter::class)
+\line
+abstract class MovieRoomDatabase: RoomDatabase()\{
+\line
+  abstract fun movieDao(): MovieItemDao
+\line
+
+\line
+  companion object \{
+\line
+    @Volatile
+\line
+    private var INSTANCE: MovieRoomDatabase? = null
+\line
+    val MIGRATION_1_2: Migration = object : Migration(1, 2) \{
+\line
+      override fun migrate(database: SupportSQLiteDatabase) \{
+\line
+        // Code to run the necessary SQL for migration
+\line
+        database.execSQL("ALTER TABLE movie_table ADD COLUMN liked INTEGER NOT NULL DEFAULT 0")
+\line
+      \}
+\line
+    \}
+\line
+
+\line
+    fun getDatabase(
+\line
+      context: Context
+\line
+    ): MovieRoomDatabase \{
+\line
+      val tempInstance = INSTANCE
+\line
+
+\line
+      if (tempInstance != null) \{
+\line
+        return tempInstance
+\line
+      \}
+\line
+
+\line
+      return INSTANCE ?: synchronized(this) \{
+\line
+
+\line
+        val instance = Room.databaseBuilder(
+\line
+          context.applicationContext,
+\line
+          MovieRoomDatabase::class.java,
+\line
+          "Movie_database"
+\line
+        )
+\line
+          .addMigrations(MIGRATION_1_2)
+\line
+          .build()
+\line
+        INSTANCE = instance
+\line
+        instance
+\line
+      \}
+\line
+    \}
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b Movies.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+data class Movies(
+\line
+  val results: List<MovieItem>,
+\line
+  val total_pages: Int,
+\line
+  val page: Int
+\line
+)
+\line
+\line
+\fs40
+\f0
+\b MovieViewModel.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import android.app.Application
+\line
+import android.util.Log
+\line
+import androidx.lifecycle.AndroidViewModel
+\line
+import androidx.lifecycle.LiveData
+\line
+import io.reactivex.android.schedulers.AndroidSchedulers
+\line
+import io.reactivex.disposables.Disposable
+\line
+import io.reactivex.schedulers.Schedulers
+\line
+import kotlinx.coroutines.CoroutineScope
+\line
+import kotlinx.coroutines.Dispatchers
+\line
+import kotlinx.coroutines.Job
+\line
+import kotlinx.coroutines.launch
+\line
+import kotlin.coroutines.CoroutineContext
+\line
+
+\line
+class MovieViewModel (application : Application) : AndroidViewModel(application) \{
+\line
+  private val api_key = "899f0396f49b73de1f6663573c2c2d85"
+\line
+  private val api_base_url = "https://api.themoviedb.org/3/"
+\line
+
+\line
+  private var parentJob = Job()
+\line
+  private val coroutineContext: CoroutineContext
+\line
+    get() = parentJob + Dispatchers.Main
+\line
+  private val scope = CoroutineScope(coroutineContext)
+\line
+
+\line
+
+\line
+  private var disposable: Disposable? = null
+\line
+
+\line
+  private val repository: MovieItemRepository
+\line
+  val allMovies: LiveData<List<MovieItem>>
+\line
+  val likedMovies: LiveData<List<MovieItem>>
+\line
+
+\line
+  init \{
+\line
+    val moviesDao = MovieRoomDatabase.getDatabase(application).movieDao()
+\line
+
+\line
+    repository = MovieItemRepository(moviesDao)
+\line
+    allMovies = repository.allMovies
+\line
+    likedMovies = repository.getLikedMovies()
+\line
+  \}
+\line
+
+\line
+  /**
+\line
+   *
+\line
+   * @param page QUERY PARAMS: required input is 1 from "themoviedb.org"
+\line
+   */
+\line
+  fun refreshMovies(page: Int)\{
+\line
+    disposable =
+\line
+      RetrofitService.create(api_base_url).getNowPlaying(api_key,page).subscribeOn(
+\line
+        Schedulers.io()).observeOn(
+\line
+        AndroidSchedulers.mainThread()).subscribe(
+\line
+        \{result -> showResult(result)\},
+\line
+        \{error -> showError(error)\})
+\line
+  \}
+\line
+
+\line
+  private fun showError(error: Throwable?) \{
+\line
+    Log.d("t04","Error:"+error?.toString())
+\line
+  \}
+\line
+
+\line
+  private fun showResult(result: Movies?) \{
+\line
+
+\line
+    Log.d("T04","Page:"+result?.page+"Result:"+result?.results?.last()?.release_date+ " pages "+ result?.total_pages)
+\line
+    deleteAll()
+\line
+
+\line
+    result?.results?.forEach \{ movie ->
+\line
+      insert(movie)
+\line
+    \}
+\line
+  \}
+\line
+
+\line
+  private fun insert(movie: MovieItem) = scope.launch(Dispatchers.IO) \{
+\line
+    repository.insert(movie)
+\line
+  \}
+\line
+
+\line
+  private fun deleteAll() = scope.launch (Dispatchers.IO)\{
+\line
+    repository.deleteAll()
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b RetrofitService.kt\b0\line
+\fs20
+\f1
+package edu.vt.cs3714.retrofitrecyclerviewguide
+\line
+
+\line
+import io.reactivex.Observable
+\line
+import com.google.gson.GsonBuilder
+\line
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+\line
+import kotlinx.coroutines.Deferred
+\line
+import retrofit2.Retrofit
+\line
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+\line
+import retrofit2.converter.gson.GsonConverterFactory
+\line
+import retrofit2.http.GET
+\line
+import retrofit2.http.Path
+\line
+import retrofit2.http.Query
+\line
+
+\line
+/**
+\line
+ * The RetrofitService handles the API requests
+\line
+ *
+\line
+ */
+\line
+interface  RetrofitService \{
+\line
+  @GET("movie/now_playing?language=en-US")
+\line
+  fun getNowPlaying(@Query("api_key") api_key: String, @Query("page") page: Int ): Observable<Movies>
+\line
+
+\line
+
+\line
+  companion object \{
+\line
+    fun create(baseUrl: String): RetrofitService \{
+\line
+
+\line
+      val retrofit = Retrofit.Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create()).addConverterFactory(
+\line
+        GsonConverterFactory.create(GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()))
+\line
+        .baseUrl(baseUrl)
+\line
+        .build()
+\line
+
+\line
+      return retrofit.create(RetrofitService::class.java)
+\line
+    \}
+\line
+  \}
+\line
+\}\line
+\line
+\fs40
+\f0
+\b layout/activity_main.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent"
+\line
+  tools:context=".MainActivity">
+\line
+
+\line
+  <androidx.fragment.app.FragmentContainerView
+\line
+    android:id="@+id/fragmentContainerView"
+\line
+    android:name="androidx.navigation.fragment.NavHostFragment"
+\line
+    android:layout_width="match_parent"
+\line
+    android:layout_height="match_parent"
+\line
+    app:defaultNavHost="true"
+\line
+    app:navGraph="@navigation/nav_graph"
+\line
+    tools:layout_editor_absoluteX="1dp"
+\line
+    tools:layout_editor_absoluteY="1dp"
+\line
+    app:layout_constraintTop_toTopOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintBottom_toBottomOf="parent"/>
+\line
+
+\line
+</androidx.constraintlayout.widget.ConstraintLayout>\line
+\line
+\fs40
+\f0
+\b layout/card_view.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="wrap_content"
+\line
+  android:layout_margin="5dp">
+\line
+
+\line
+  <androidx.constraintlayout.widget.ConstraintLayout
+\line
+    android:id="@+id/card_layout"
+\line
+    android:layout_width="match_parent"
+\line
+    android:layout_height="match_parent">
+\line
+
+\line
+    <ImageView
+\line
+      android:id="@+id/poster"
+\line
+      android:layout_width="wrap_content"
+\line
+      android:layout_height="wrap_content"
+\line
+      app:layout_constraintBottom_toBottomOf="parent"
+\line
+      app:layout_constraintStart_toStartOf="parent"
+\line
+      app:layout_constraintTop_toTopOf="parent"
+\line
+      app:srcCompat="@mipmap/ic_launcher" />
+\line
+
+\line
+    <TextView
+\line
+      android:id="@+id/title"
+\line
+      android:layout_width="wrap_content"
+\line
+      android:layout_height="wrap_content"
+\line
+      android:text="."
+\line
+      android:textAppearance="@style/TextAppearance.AppCompat.Large"
+\line
+      app:layout_constraintStart_toEndOf="@+id/poster"
+\line
+      app:layout_constraintTop_toTopOf="parent" />
+\line
+
+\line
+    <TextView
+\line
+      android:id="@+id/rating"
+\line
+      android:layout_width="wrap_content"
+\line
+      android:layout_height="wrap_content"
+\line
+      android:text="."
+\line
+      app:layout_constraintBottom_toBottomOf="parent"
+\line
+      app:layout_constraintStart_toEndOf="@+id/poster" />
+\line
+  </androidx.constraintlayout.widget.ConstraintLayout>
+\line
+</androidx.cardview.widget.CardView>\line
+\line
+\fs40
+\f0
+\b layout/fragment_detail_screen.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent"
+\line
+  tools:context=".MainActivity">
+\line
+
+\line
+  <ImageView
+\line
+    android:id="@+id/detail_screen_poster"
+\line
+    android:layout_width="match_parent"
+\line
+    android:layout_height="350dp"
+\line
+    android:paddingBottom="5dp"
+\line
+    app:layout_constraintBottom_toTopOf="@id/detail_screen_title"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toTopOf="parent"
+\line
+    app:srcCompat="@mipmap/ic_launcher" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/detail_screen_title"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:paddingBottom="10dp"
+\line
+    android:text="Movie B"
+\line
+    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+\line
+    android:textSize="30sp"
+\line
+    app:layout_constraintBottom_toTopOf="@id/detail_screen_release"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toBottomOf="@id/detail_screen_poster" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/detail_screen_release"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:paddingStart="50dp"
+\line
+    android:paddingEnd="50dp"
+\line
+    android:paddingBottom="15dp"
+\line
+    android:text="Release date: May 25, 2017"
+\line
+    android:textSize="18sp"
+\line
+    app:layout_constraintBottom_toTopOf="@id/detail_screen_overview"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toBottomOf="@id/detail_screen_title" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/detail_screen_overview"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:paddingStart="50dp"
+\line
+    android:paddingEnd="50dp"
+\line
+    android:paddingBottom="15dp"
+\line
+    android:text="Overview: A movie about a black sun...."
+\line
+    android:textSize="18sp"
+\line
+    app:layout_constraintBottom_toTopOf="@id/like_button"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toBottomOf="@id/detail_screen_release" />
+\line
+
+\line
+  <Button
+\line
+    android:id="@+id/like_button"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="Unliked"
+\line
+    app:layout_constraintBottom_toBottomOf="parent"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toBottomOf="@id/detail_screen_overview" />
+\line
+
+\line
+
+\line
+</androidx.constraintlayout.widget.ConstraintLayout>\line
+\line
+\fs40
+\f0
+\b layout/fragment_list_screen.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:layout_width="match_parent"
+\line
+  android:layout_height="match_parent"
+\line
+  tools:context=".MainActivity">
+\line
+
+\line
+  <!--  <SearchView-->
+\line
+  <!--    android:id="@+id/search_view"-->
+\line
+  <!--    android:layout_width="0dp"-->
+\line
+  <!--    android:layout_height="0dp"-->
+\line
+  <!--    app:layout_constraintBottom_toTopOf="@id/movie_list"-->
+\line
+  <!--    app:layout_constraintEnd_toStartOf="@id/refresh"-->
+\line
+  <!--    app:layout_constraintStart_toStartOf="parent"-->
+\line
+  <!--    app:layout_constraintTop_toTopOf="parent"-->
+\line
+  <!--    app:showAsAction="collapseActionView|ifRoom"-->
+\line
+  <!--    tools:layout_editor_absoluteX="61dp"-->
+\line
+  <!--    tools:layout_editor_absoluteY="1dp" />-->
+\line
+
+\line
+  <Button
+\line
+    android:id="@+id/refresh"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:drawableStart="@drawable/ic_refresh"
+\line
+    android:text="Refresh"
+\line
+    app:layout_constraintBottom_toTopOf="@+id/movie_list"
+\line
+    app:layout_constraintEnd_toStartOf="@id/filter"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toTopOf="parent" />
+\line
+
+\line
+  <Switch
+\line
+    android:id="@+id/filter"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="Filter"
+\line
+    app:layout_constraintBottom_toTopOf="@+id/movie_list"
+\line
+    app:layout_constraintEnd_toStartOf="@id/sort_by"
+\line
+    app:layout_constraintStart_toEndOf="@id/refresh"
+\line
+    app:layout_constraintTop_toTopOf="parent" />
+\line
+
+\line
+  <TextView
+\line
+    android:id="@+id/sort_by"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    android:text="Sort by: "
+\line
+    android:textColor="@color/black"
+\line
+    android:textSize="17sp"
+\line
+    app:layout_constraintBottom_toTopOf="@+id/movie_list"
+\line
+    app:layout_constraintEnd_toStartOf="@id/sort_options"
+\line
+    app:layout_constraintStart_toEndOf="@id/filter"
+\line
+    app:layout_constraintTop_toTopOf="parent" />
+\line
+
+\line
+  <Spinner
+\line
+    android:id="@+id/sort_options"
+\line
+    android:layout_width="wrap_content"
+\line
+    android:layout_height="wrap_content"
+\line
+    app:layout_constraintBottom_toTopOf="@+id/movie_list"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintStart_toEndOf="@id/sort_by"
+\line
+    app:layout_constraintTop_toTopOf="parent" />
+\line
+
+\line
+  <androidx.recyclerview.widget.RecyclerView
+\line
+    android:id="@+id/movie_list"
+\line
+    android:layout_width="0dp"
+\line
+    android:layout_height="0dp"
+\line
+    app:layout_constraintBottom_toBottomOf="parent"
+\line
+    app:layout_constraintEnd_toEndOf="parent"
+\line
+    app:layout_constraintHorizontal_bias="0.0"
+\line
+    app:layout_constraintStart_toStartOf="parent"
+\line
+    app:layout_constraintTop_toBottomOf="@+id/refresh" />
+\line
+
+\line
+</androidx.constraintlayout.widget.ConstraintLayout>\line
+\line
+\fs40
+\f0
+\b navigation/nav_graph.xml\b0\line
+\fs20
+\f1
+<?xml version="1.0" encoding="utf-8"?>
+\line
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+\line
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+\line
+  xmlns:tools="http://schemas.android.com/tools"
+\line
+  android:id="@+id/nav_graph"
+\line
+  app:startDestination="@id/listScreen">
+\line
+
+\line
+  <fragment
+\line
+    android:id="@+id/listScreen"
+\line
+    android:name="edu.vt.cs3714.retrofitrecyclerviewguide.ListScreen"
+\line
+    android:label="fragment_list_screen"
+\line
+    tools:layout="@layout/fragment_list_screen" >
+\line
+    <action
+\line
+      android:id="@+id/action_listScreen_to_detailScreen"
+\line
+      app:destination="@id/detailScreen" />
+\line
+  </fragment>
+\line
+  <fragment
+\line
+    android:id="@+id/detailScreen"
+\line
+    android:name="edu.vt.cs3714.retrofitrecyclerviewguide.DetailScreen"
+\line
+    android:label="fragment_detail_screen"
+\line
+    tools:layout="@layout/fragment_detail_screen" />
+\line
+</navigation>\line
+\line
+\fs40
+\f0
+\b values/strings.xml\b0\line
+\fs20
+\f1
+<resources>
+\line
+  <string name="app_name">Movie Database</string>
+\line
+  <string name="base_url">https://api.themoviedb.org/3/</string>
+\line
+  <string name="picture_base_url">http://image.tmdb.org/t/p/w500/</string>
+\line
+  <string name="api_key">EnterYourAPIKeyHere</string>
+\line
+  <!-- TODO: Remove or change this placeholder text -->
+\line
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+\line
+  <string-array name="sorting_options">
+\line
+    <item>Title</item>
+\line
+    <item>Rating</item>
+\line
+  </string-array>
+\line
+</resources>\line
+\line
+}

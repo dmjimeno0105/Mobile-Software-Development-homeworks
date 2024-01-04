@@ -1,0 +1,21 @@
+{
+  "USD": "$",
+  "JPY": "¥",
+  "GBP": "£",
+  "CNY": "¥",
+  "AUD": "$",
+  "CAD": "$",
+  "CHF": "CHF",
+  "HKD": "HKD",
+  "SGD": "S$",
+  "SEK": "kr",
+  "KRW": "₩",
+  "NOK": "kr",
+  "NZD": "$",
+  "INR": "₹",
+  "MXN": "$",
+  "TWD": "NT$",
+  "ZAR": "R",
+  "BRL": "R$",
+  "DKK": "kr"
+}
